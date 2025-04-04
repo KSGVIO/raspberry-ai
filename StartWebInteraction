@@ -1,0 +1,2 @@
+ollama_env\Scripts\activate
+uvicorn main:app --reload

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Qwen2.5 Chat</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>🧠 Qwen2.5 AI Chat</h1>
+    <div id="chat-box"></div>
+    <input id="user-input" placeholder="Ask something..." autofocus />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const prompt = input.value.trim();
+            if (!prompt) return;
+
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="user-msg">🧑: ${prompt}</div>`;
+            input.value = "";
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+            });
+
+            const data = await response.json();
+            if (data.response) {
+                chatBox.innerHTML += `<div class="bot-msg">🤖: ${data.response}</div>`;
+            } else {
+                chatBox.innerHTML += `<div class="error-msg">❌ Error: ${data.error}</div>`;
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        document.getElementById("user-input").addEventListener("keydown", e => {
+            if (e.key === "Enter") sendMessage();
+        });
+    </script>
+</body>
+</html>
